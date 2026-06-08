@@ -1,0 +1,157 @@
+<!-- templates/mypage.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12 space-y-12">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- Left Calendar Side -->
+        <div class="lg:col-span-4 flex flex-col justify-between gap-6">
+            <div class="bg-[var(--color-abyssal)] text-white p-8 rounded-2xl flex flex-col justify-center items-center relative overflow-hidden shadow-xl">
+                <span class="text-[10px] font-display uppercase tracking-[0.25em] text-[var(--color-gold)] mb-4">Current Moment</span>
+                <div class="flex items-center space-x-2 text-4xl md:text-5xl font-display font-bold tracking-widest text-[var(--color-seafoam)]" id="clock">
+                    --:--:--
+                </div>
+                <span class="text-xs font-serif italic text-gray-400 mt-2">Active Devotional State</span>
+            </div>
+
+            <!-- Dynamic Highlights Calendar -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-md">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                    <span class="font-display text-xs uppercase tracking-wider text-[var(--color-gold)]">June 2026</span>
+                    <span class="text-[9px] text-emerald-600 font-display uppercase tracking-widest flex items-center space-x-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+                        <span>Calendar Synced</span>
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-7 gap-2 text-center text-xs" id="calendarGrid">
+                    <span class="text-red-400 font-semibold">S</span>
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span>
+                    <span class="text-blue-400 font-semibold">S</span>
+                    <!-- JavaScript dynamically injects June 2026 days and completes highlights based on user completions -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Task Board -->
+        <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md flex flex-col justify-between">
+                <div>
+                    <div class="h-44 bg-[var(--color-abyssal)] relative overflow-hidden flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-abyssal)] to-transparent"></div>
+                        <span class="relative z-10 text-[10px] font-display uppercase tracking-[0.25em] text-[var(--color-gold)] border border-[var(--color-gold)] px-3 py-1 rounded-full">Habakkuk 2:14</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="font-display text-lg uppercase tracking-wider text-[var(--color-abyssal)]">Verse of the Day</h3>
+                        <p class="text-xs text-gray-500 font-serif leading-relaxed">"{{ today_verse.text }}"</p>
+                        {% if today_record.verse_accuracy > 0 %}
+                            <div class="text-[10px] text-amber-600 font-display uppercase tracking-widest">
+                                Completed with ({{ today_record.verse_accuracy }}% accuracy)
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <a href="/verse" class="btn-gold block text-center py-2.5 rounded-xl text-[10px]">Start Memorization</a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md flex flex-col justify-between">
+                <div>
+                    <div class="h-44 bg-[var(--color-abyssal)] relative overflow-hidden flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=600&q=80" class="absolute inset-0 w-full h-full object-cover opacity-45">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-abyssal)] to-transparent"></div>
+                        <span class="relative z-10 text-[10px] font-display uppercase tracking-[0.25em] text-[var(--color-seafoam)] border border-[var(--color-oceanic-teal)] px-3 py-1 rounded-full">Active Prayer</span>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <h3 class="font-display text-lg uppercase tracking-wider text-[var(--color-abyssal)]">Daily Talk with God</h3>
+                        <p class="text-xs text-gray-500 font-serif leading-relaxed">Share your innermost requests and read what has been saved for today.</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <a href="/prayer" class="btn-gold block text-center py-2.5 rounded-xl text-[10px]">Open Prayer Card</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Gratitude & Reading Tracker Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
+        <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-md flex flex-col justify-between gap-6">
+            <div class="space-y-4 w-full">
+                <span class="text-xs font-display text-[var(--color-gold)] uppercase tracking-wider">Sanctified Heart</span>
+                <h3 class="text-2xl font-display text-[var(--color-abyssal)]">Gratitude Journal</h3>
+                <p class="text-sm text-gray-500 font-serif leading-relaxed">Record your 5 daily aspects of gratitude. Reviewing these later in history develops true resilience.</p>
+            </div>
+            <a href="/gratitude" class="btn-gold w-full text-center py-3 rounded-xl text-[10px]">Begin Journaling</a>
+        </div>
+
+        <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-md flex flex-col justify-between gap-6">
+            <div class="space-y-4 w-full">
+                <span class="text-xs font-display text-[var(--color-oceanic-teal)] uppercase tracking-wider">Bible Study</span>
+                <h3 class="text-2xl font-display text-[var(--color-abyssal)]">Bible Reading Tracker</h3>
+                <p class="text-sm text-gray-500 font-serif leading-relaxed">Read today's scripture and check it off. Your completion will be stamped on your personalized calendar grid.</p>
+            </div>
+            <a href="/read" class="btn-gold w-full text-center py-3 rounded-xl text-[10px]">Immersive Bible Reader</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Realtime clock logic
+    function updateClock() {
+        const now = new Date();
+        const hrs = String(now.getHours() % 12 || 12).padStart(2, '0');
+        const mins = String(now.getMinutes()).padStart(2, '0');
+        const secs = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('clock').textContent = `${hrs}:${mins}:${secs}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Completed reading days list passed from Flask
+    const completedDates = {{ completed_dates | tojson }};
+    const todayDay = {{ today_day | tojson }};
+
+    // Render June 2026 calendar dynamically (with highlights)
+    const calendarGrid = document.getElementById('calendarGrid');
+    
+    // Day 1 of June 2026 starts on Monday (index 1)
+    // June 2026 has 30 days
+    const totalDays = 30;
+    const startOffset = 1; // Monday offset
+
+    // Blank spaces for calendar alignment
+    for (let i = 0; i < startOffset; i++) {
+        const span = document.createElement('span');
+        span.className = "text-gray-200 select-none";
+        span.textContent = "31";
+        calendarGrid.appendChild(span);
+    }
+
+    // Generate days 1 to 30
+    for (let day = 1; day <= totalDays; day++) {
+        const span = document.createElement('span');
+        const dateStr = `2026-06-${String(day).padStart(2, '0')}`;
+        
+        span.className = "w-7 h-7 flex items-center justify-center mx-auto text-xs font-semibold relative select-none rounded-full transition-all duration-300";
+        span.textContent = day;
+
+        // Check completion status and highlight in gold/teal
+        if (completedDates.includes(dateStr)) {
+            span.className += " bg-[var(--color-oceanic-teal)] text-white shadow-md shadow-[var(--color-oceanic-teal)]/20";
+        } else if (day === todayDay) { // Highlights today
+            span.className += " border-2 border-[var(--color-gold)] text-[var(--color-abyssal)]";
+        } else {
+            span.className += " text-gray-700 hover:bg-gray-100";
+        }
+        
+        calendarGrid.appendChild(span);
+    }
+</script>
+{% endblock %}

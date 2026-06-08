@@ -1,0 +1,156 @@
+<!-- templates/bible.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .bible-container {
+        background: 
+            radial-gradient(circle at top left, rgba(10, 126, 140, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.04) 0%, transparent 50%),
+            var(--color-parchment);
+    }
+    .book-list-scroll::-webkit-scrollbar {
+        width: 4px;
+    }
+    .book-list-scroll::-webkit-scrollbar-thumb {
+        background-color: var(--color-gold);
+        border-radius: 4px;
+    }
+    .book-list-scroll::-webkit-scrollbar-track {
+        background-color: rgba(3, 20, 36, 0.05);
+    }
+</style>
+
+<div class="bible-container min-h-screen py-8 px-4 md:px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Sidebar: Book and Chapter Selector (lg:col-span-4) -->
+        <aside class="lg:col-span-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-md space-y-6">
+            <div>
+                <h3 class="font-display text-sm tracking-wider uppercase text-[var(--color-abyssal)] border-b border-gray-100 pb-2 mb-4">Select Scripture</h3>
+                
+                <!-- Book Select (for mobile) / Quick selector -->
+                <div class="space-y-3">
+                    <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400">Choose Book</label>
+                    <select id="bookSelect" class="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[var(--color-gold)] font-sans text-sm bg-white">
+                        {% for book in books %}
+                            <option value="{{ book.name }}" {% if book.name == current_book %}selected{% endif %}>{{ book.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Chapter Grid Selector -->
+            <div class="space-y-3">
+                <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400">Chapters</label>
+                <div class="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto pr-1 book-list-scroll">
+                    {% for ch in range(1, total_chapters + 1) %}
+                        <a href="/bible/{{ current_book }}/{{ ch }}" class="aspect-square flex items-center justify-center rounded-lg border text-xs font-semibold font-display transition-all
+                            {% if ch == current_chapter %}
+                                bg-[var(--color-oceanic-teal)] text-white border-[var(--color-oceanic-teal)] shadow-md shadow-[var(--color-oceanic-teal)]/20 scale-105
+                            {% else %}
+                                bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200
+                            {% endif %}">
+                            {{ ch }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Desktop Books List (Museum style scrollable) -->
+            <div class="hidden lg:block space-y-3 border-t border-gray-100 pt-6">
+                <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2">Canonical Books</label>
+                <div class="space-y-1 max-h-96 overflow-y-auto pr-2 book-list-scroll">
+                    {% for book in books %}
+                        <a href="/bible/{{ book.name }}/1" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-display transition-all
+                            {% if book.name == current_book %}
+                                bg-amber-50/50 text-[var(--color-gold)] font-bold border-l-4 border-[var(--color-gold)]
+                            {% else %}
+                                text-gray-600 hover:bg-gray-50 hover:text-[var(--color-abyssal)]
+                            {% endif %}">
+                            <span>{{ book.name }}</span>
+                            <span class="text-[9px] opacity-60 font-serif">{{ book.chapters_count }} ch</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area: Scripture Reader (lg:col-span-8) -->
+        <main class="lg:col-span-8 bg-white p-8 md:p-12 rounded-3xl border border-gray-100 shadow-lg space-y-8">
+            
+            <!-- Book & Chapter Title Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-100 pb-6 gap-4">
+                <div class="space-y-1">
+                    <h2 class="text-3xl font-display text-[var(--color-abyssal)] font-bold">{{ current_book }}</h2>
+                    <p class="text-xs font-serif text-[var(--color-gold)] uppercase tracking-wider">Chapter {{ current_chapter }} of {{ total_chapters }} • King James Version (KJV)</p>
+                </div>
+                
+                <!-- Quick Navigation Buttons -->
+                <div class="flex items-center space-x-2 text-xs font-display">
+                    {% if current_chapter > 1 %}
+                        <a href="/bible/{{ current_book }}/{{ current_chapter - 1 }}" class="px-4 py-2 border border-gray-200 rounded-full hover:bg-gray-50 transition-colors flex items-center space-x-1">
+                            <span>← Prev</span>
+                        </a>
+                    {% else %}
+                        <span class="px-4 py-2 border border-gray-100 text-gray-300 rounded-full cursor-not-allowed select-none">← Prev</span>
+                    {% endif %}
+
+                    {% if current_chapter < total_chapters %}
+                        <a href="/bible/{{ current_book }}/{{ current_chapter + 1 }}" class="px-4 py-2 bg-[var(--color-gold)] text-white rounded-full hover:bg-[#B89025] transition-all shadow-md shadow-amber-500/10 flex items-center space-x-1">
+                            <span>Next →</span>
+                        </a>
+                    {% else %}
+                        <span class="px-4 py-2 bg-gray-100 text-gray-300 rounded-full cursor-not-allowed select-none">Next →</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Verse Reading Content -->
+            <!-- <div class="space-y-6 text-gray-700 font-serif text-lg leading-loose text-justify pr-2"> -->
+            <div class="text-gray-700 font-serif text-lg leading-loose text-justify pr-2">
+                {% for verse in verses %}
+                    <p class="hover:bg-amber-50/10 p-2 rounded-xl transition-colors">
+                        <strong class="font-display text-xs text-[var(--color-gold)] mr-2 select-none">{{ verse.num }}</strong>
+                        {{ verse.text }}
+                    </p>
+                {% endfor %}
+            </div>
+
+            <!-- Bottom Pagination Navigation -->
+            <div class="pt-8 border-t border-gray-100 flex items-center justify-between text-xs font-display text-gray-400">
+                {% if current_chapter > 1 %}
+                    <a href="/bible/{{ current_book }}/{{ current_chapter - 1 }}" class="hover:text-[var(--color-abyssal)] transition-colors flex items-center space-x-1">
+                        <span>← Previous Chapter</span>
+                    </a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+
+                <span class="text-[9px] uppercase tracking-widest text-gray-300">The Holy Scriptures</span>
+
+                {% if current_chapter < total_chapters %}
+                    <a href="/bible/{{ current_book }}/{{ current_chapter + 1 }}" class="hover:text-[var(--color-abyssal)] transition-colors flex items-center space-x-1">
+                        <span>Next Chapter →</span>
+                    </a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+            </div>
+        </main>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const bookSelect = document.getElementById('bookSelect');
+        bookSelect.addEventListener('change', () => {
+            const selectedBook = bookSelect.value;
+            window.location.href = `/bible/${encodeURIComponent(selectedBook)}/1`;
+        });
+    });
+</script>
+{% endblock %}

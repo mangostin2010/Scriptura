@@ -1,0 +1,45 @@
+<!-- templates/search.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen py-8 px-4 md:px-6" style="background: radial-gradient(circle at top left, rgba(10, 126, 140, 0.05) 0%, transparent 50%), radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.04) 0%, transparent 50%), var(--color-parchment);">
+    <div class="max-w-4xl mx-auto space-y-8">
+
+        <!-- Header -->
+        <div class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-md">
+            <p class="text-[10px] font-display uppercase tracking-[0.25em] text-[var(--color-gold)] mb-2">Search Scripture</p>
+            {% if query %}
+                <h2 class="text-3xl font-display text-[var(--color-abyssal)] font-bold">Results for &ldquo;{{ query }}&rdquo;</h2>
+                <p class="text-xs font-serif text-gray-400 mt-2">
+                    {{ results|length }} verse{{ '' if results|length == 1 else 's' }} found{% if capped %} (showing first 200){% endif %} &bull; King James Version
+                </p>
+            {% else %}
+                <h2 class="text-3xl font-display text-[var(--color-abyssal)] font-bold">Search the Scriptures</h2>
+                <p class="text-xs font-serif text-gray-400 mt-2">Type a word or phrase in the search box above to find verses.</p>
+            {% endif %}
+        </div>
+
+        <!-- Results -->
+        {% if query and results %}
+            <div class="space-y-4">
+                {% for r in results %}
+                    <a href="{{ url_for('bible_reader', book_name=r.book, chapter_num=r.chapter) }}"
+                       class="block bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[var(--color-gold)]/40 transition-all group">
+                        <span class="inline-block px-3 py-1 bg-[var(--color-seafoam)] text-[var(--color-oceanic-teal)] text-[10px] font-display uppercase tracking-wider rounded-full mb-3">
+                            {{ r.book }} {{ r.chapter }}:{{ r.verse }}
+                        </span>
+                        <p class="text-gray-700 font-serif text-lg leading-relaxed">{{ r.text }}</p>
+                        <span class="text-[10px] font-display uppercase tracking-wider text-gray-300 group-hover:text-[var(--color-gold)] transition-colors mt-3 inline-block">Read in context &rarr;</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% elif query and not results %}
+            <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm text-center">
+                <p class="font-serif text-lg text-gray-500">No verses found for &ldquo;{{ query }}&rdquo;.</p>
+                <p class="text-xs text-gray-400 mt-2 font-serif">Try a different word or a shorter phrase.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

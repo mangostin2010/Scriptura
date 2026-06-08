@@ -1,0 +1,53 @@
+<!-- templates/read.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .water-bg {
+        background: 
+            radial-gradient(circle at top left, rgba(10, 126, 140, 0.08) 0%, transparent 60%),
+            radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+            var(--color-parchment);
+    }
+</style>
+
+<div class="water-bg min-h-screen py-12 px-6">
+    <div class="max-w-4xl mx-auto space-y-10">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-gray-200 pb-6">
+            <div class="flex items-center space-x-4">
+                <a href="/mypage" class="text-xs font-display text-gray-400 hover:text-[var(--color-abyssal)] transition-colors">← Dashboard</a>
+                <span class="text-gray-300">/</span>
+                <span class="text-xs font-display text-[var(--color-gold)] font-semibold uppercase">Proverbs {{ chapter_num }}</span>
+            </div>
+
+            <span class="text-xs font-display uppercase tracking-widest text-[var(--color-gold)]">{{ today_label }} Devotion</span>
+        </div>
+
+        <!-- Bible text display box -->
+        <div class="bg-white p-8 md:p-16 rounded-3xl border border-gray-100 shadow-lg space-y-8 relative overflow-hidden">
+            <div class="space-y-6 text-gray-700 font-serif text-lg leading-loose text-justify">
+                {% for verse in verses %}
+                <p><strong class="font-display text-xs text-[var(--color-gold)] mr-2">{{ verse.num }}</strong> {{ verse.text }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Complete Devotional action form -->
+            <div class="pt-10 border-t border-gray-100 flex flex-col items-center space-y-4">
+                {% if record.read_completed %}
+                    <div class="px-6 py-3 bg-teal-50 text-teal-800 text-xs font-display rounded-full tracking-wider border border-teal-200">
+                        ✓ Reading marked completed for today
+                    </div>
+                {% else %}
+                    <p class="text-xs text-gray-400 font-serif">Have you digested God's instructions for today?</p>
+                    <form method="POST">
+                        <button type="submit" class="btn-gold px-12 py-4 rounded-full text-xs">Mark as Completed</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

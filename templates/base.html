@@ -1,0 +1,261 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scriptura - Sacred Archives</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --color-abyssal: #031424;
+            --color-deep-sea: #082845;
+            --color-oceanic-teal: #0A7E8C;
+            --color-seafoam: #E0F2F1;
+            --color-gold: #D4AF37;
+            --color-parchment: #FCFAF5;
+            --font-display: 'Cinzel', serif;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-cursive: 'Great Vibes', cursive;
+        }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-parchment);
+            color: var(--color-abyssal);
+            scroll-behavior: smooth;
+        }
+        .font-display { font-family: var(--font-display); }
+        .font-serif { font-family: var(--font-serif); }
+        .font-cursive { font-family: var(--font-cursive); }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--color-gold) 0%, #B89025 100%);
+            color: white;
+            font-family: var(--font-display);
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--color-gold);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-150/50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex flex-col">
+                <span class="font-cursive text-4xl text-[var(--color-abyssal)] leading-none">Scriptura</span>
+                <span class="text-[9px] font-display uppercase tracking-[0.25em] text-[var(--color-gold)] mt-1">Sacred Word</span>
+            </a>
+
+            <!-- Search Area (desktop) -->
+            <form method="get" action="/search" class="hidden md:flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 focus-within:ring-2 focus-within:ring-[var(--color-oceanic-teal)] transition-all">
+                <button type="submit" class="flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+                <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search Scripture..." class="bg-transparent border-none text-xs w-full focus:outline-none text-gray-700">
+            </form>
+
+            <!-- Navigation Links (desktop) -->
+            <nav class="hidden md:flex items-center space-x-8 text-xs font-display uppercase tracking-wider text-[var(--color-abyssal)]">
+                <a href="/" class="nav-link {% if request.endpoint == 'index' %}font-semibold text-[var(--color-gold)]{% endif %}">Home</a>
+                <a href="/bible" class="nav-link {% if request.endpoint == 'bible_reader' %}font-semibold text-[var(--color-gold)]{% endif %}">Bible</a>
+                {% if session.get('user_id') %}
+                    <a href="/mypage" class="nav-link {% if request.endpoint == 'mypage' %}font-semibold text-[var(--color-gold)]{% endif %}">My Page</a>
+                    <a href="/history" class="nav-link {% if request.endpoint == 'history' %}font-semibold text-[var(--color-gold)]{% endif %}">History</a>
+                    <div class="flex items-center space-x-3 border-l border-gray-200 pl-6">
+                        <span class="text-[10px] text-gray-400">Welcome, <strong class="text-[var(--color-abyssal)] font-semibold">{{ session.get('username') }}</strong></span>
+                        <a href="/logout" class="text-[10px] text-red-500 hover:underline tracking-normal">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="btn-gold px-5 py-2.5 rounded-full text-[10px] shadow-none">Create Account</a>
+                {% endif %}
+            </nav>
+
+            <!-- Hamburger (mobile) -->
+            <button type="button" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false" class="md:hidden flex items-center justify-center p-2 text-[var(--color-abyssal)]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 bg-white px-6 py-5 space-y-5">
+            <form method="get" action="/search" class="flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-[var(--color-oceanic-teal)] transition-all">
+                <button type="submit" class="flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+                <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search Scripture..." class="bg-transparent border-none text-sm w-full focus:outline-none text-gray-700">
+            </form>
+            <nav class="flex flex-col space-y-3 text-sm font-display uppercase tracking-wider text-[var(--color-abyssal)]">
+                <a href="/" class="{% if request.endpoint == 'index' %}font-semibold text-[var(--color-gold)]{% endif %}">Home</a>
+                <a href="/bible" class="{% if request.endpoint == 'bible_reader' %}font-semibold text-[var(--color-gold)]{% endif %}">Bible</a>
+                {% if session.get('user_id') %}
+                    <a href="/mypage" class="{% if request.endpoint == 'mypage' %}font-semibold text-[var(--color-gold)]{% endif %}">My Page</a>
+                    <a href="/history" class="{% if request.endpoint == 'history' %}font-semibold text-[var(--color-gold)]{% endif %}">History</a>
+                    <div class="flex items-center justify-between border-t border-gray-100 pt-3">
+                        <span class="text-[11px] text-gray-400 normal-case tracking-normal">Welcome, <strong class="text-[var(--color-abyssal)] font-semibold">{{ session.get('username') }}</strong></span>
+                        <a href="/logout" class="text-[11px] text-red-500 hover:underline tracking-normal normal-case">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register" class="btn-gold px-5 py-2.5 rounded-full text-[11px] text-center shadow-none">Create Account</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('mobileMenuBtn');
+            const menu = document.getElementById('mobileMenu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const isHidden = menu.classList.toggle('hidden');
+                    btn.setAttribute('aria-expanded', String(!isHidden));
+                });
+            }
+        })();
+    </script>
+
+    <!-- Flash message alerts -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-4xl mx-auto mt-4 px-6 w-full">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-xl text-xs font-display tracking-wide border {% if category == 'error' %} bg-red-50 text-red-700 border-red-200 {% else %} bg-teal-50 text-teal-800 border-teal-200 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-[var(--color-abyssal)] text-white/70 py-12 px-6 border-t border-white/5 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-display tracking-wider">
+            <p>&copy; 2026 SCRIPTURA. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Background Music Player -->
+    <div id="bgmPlayer" class="fixed bottom-5 right-5 z-50 flex items-center gap-3 bg-white/95 backdrop-blur-md border border-gray-200 shadow-lg rounded-full pl-3 pr-5 py-2">
+        <button type="button" id="bgmToggle" aria-label="Play background music" class="flex-shrink-0 h-10 w-10 rounded-full bg-[var(--color-oceanic-teal)] text-white flex items-center justify-center hover:bg-[var(--color-abyssal)] transition-colors">
+            <svg id="bgmIconPlay" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg id="bgmIconPause" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+            </svg>
+        </button>
+        <div class="flex flex-col">
+            <span class="text-[10px] font-display uppercase tracking-wider text-[var(--color-gold)] leading-tight">Prayer Music</span>
+            <input type="range" id="bgmVolume" min="0" max="1" step="0.05" value="0.5" class="w-24 accent-[var(--color-oceanic-teal)] cursor-pointer" aria-label="Volume">
+        </div>
+        <audio id="bgmAudio" loop preload="none" src="{{ url_for('static', filename='bgm.mp3') }}"></audio>
+    </div>
+    <script>
+        (function () {
+            const audio = document.getElementById('bgmAudio');
+            const toggle = document.getElementById('bgmToggle');
+            const iconPlay = document.getElementById('bgmIconPlay');
+            const iconPause = document.getElementById('bgmIconPause');
+            const volume = document.getElementById('bgmVolume');
+            if (!audio || !toggle) return;
+
+            const savedVol = parseFloat(localStorage.getItem('bgmVolume'));
+            audio.volume = isNaN(savedVol) ? 0.5 : savedVol;
+            volume.value = audio.volume;
+
+            function showPlaying(playing) {
+                iconPlay.classList.toggle('hidden', playing);
+                iconPause.classList.toggle('hidden', !playing);
+                toggle.setAttribute('aria-label', playing ? 'Pause background music' : 'Play background music');
+            }
+
+            // Restore playback position from the previous page
+            const savedTime = parseFloat(localStorage.getItem('bgmTime'));
+            if (!isNaN(savedTime)) {
+                audio.addEventListener('loadedmetadata', () => {
+                    if (savedTime < audio.duration) audio.currentTime = savedTime;
+                }, { once: true });
+            }
+
+            // If music was playing before navigation, resume automatically.
+            // The earlier user click already granted autoplay permission for this session.
+            if (localStorage.getItem('bgmPlaying') === 'true') {
+                audio.play().then(() => showPlaying(true)).catch(() => showPlaying(false));
+            }
+
+            toggle.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => showPlaying(true)).catch(() => showPlaying(false));
+                } else {
+                    audio.pause();
+                    showPlaying(false);
+                }
+            });
+
+            volume.addEventListener('input', () => {
+                audio.volume = parseFloat(volume.value);
+                localStorage.setItem('bgmVolume', volume.value);
+            });
+
+            audio.addEventListener('play', () => {
+                showPlaying(true);
+                localStorage.setItem('bgmPlaying', 'true');
+            });
+            audio.addEventListener('pause', () => {
+                showPlaying(false);
+                localStorage.setItem('bgmPlaying', 'false');
+            });
+            audio.addEventListener('timeupdate', () => {
+                localStorage.setItem('bgmTime', audio.currentTime);
+            });
+            // Reset stored position when the loop restarts so it doesn't seek past the end
+            audio.addEventListener('ended', () => {
+                localStorage.setItem('bgmTime', '0');
+            });
+        })();
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

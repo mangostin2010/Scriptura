@@ -1,0 +1,87 @@
+<!-- templates/history.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+    <div class="border-b border-gray-200 pb-4">
+        <span class="text-xs font-display text-[var(--color-gold)] uppercase tracking-widest">Spiritual Milestones</span>
+        <h2 class="text-3xl font-display text-[var(--color-abyssal)]">Sacred Journal History</h2>
+    </div>
+
+    {% if not records %}
+        <div class="text-center py-24 bg-white rounded-2xl border border-gray-100/80 shadow-sm space-y-4">
+            <p class="font-serif italic text-lg text-gray-400">Your journal is currently empty.</p>
+            <p class="text-xs text-gray-400">Complete reading scriptures, type verses, write prayers, and logs daily gratitude to build your ledger.</p>
+            <div class="pt-2">
+                <a href="/mypage" class="btn-gold px-6 py-2.5 rounded-full text-xs inline-block">Begin Devotion</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="space-y-8">
+            {% for record in records %}
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-150/70 shadow-sm space-y-6 hover:shadow-md transition-shadow relative">
+                    <div class="absolute top-0 left-0 w-1.5 h-full {% if record.read_completed %} bg-[var(--color-oceanic-teal)] {% else %} bg-gray-200 {% endif %} rounded-l-2xl"></div>
+                    
+                    <!-- Date & Overview status -->
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 pb-4 pl-4">
+                        <div>
+                            <span class="font-display text-lg font-bold text-[var(--color-abyssal)]">{{ record.date }}</span>
+                            <span class="text-xs font-serif text-gray-400 block mt-0.5">Spiritual alignment audit</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            {% if record.read_completed %}
+                                <span class="px-3 py-1 bg-teal-50 text-teal-700 text-[9px] font-display uppercase tracking-wider rounded-full">✓ Read Complete</span>
+                            {% endif %}
+                            {% if record.verse_accuracy > 0 %}
+                                <span class="px-3 py-1 bg-amber-50 text-amber-700 text-[9px] font-display uppercase tracking-wider rounded-full">✎ Versed ({{ record.verse_accuracy }}%)</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Inner History Details Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pl-4">
+                        
+                        <!-- Left inside detail: Verse App & Prayers -->
+                        <div class="space-y-6">
+                            {% if record.verse_application %}
+                                <div class="space-y-2">
+                                    <h4 class="text-[10px] font-display uppercase tracking-widest text-[var(--color-gold)]">Life Application</h4>
+                                    <p class="text-sm font-serif italic text-gray-700 leading-relaxed bg-amber-50/20 p-4 rounded-xl border border-dashed border-amber-100">"{{ record.verse_application }}"</p>
+                                </div>
+                            {% endif %}
+
+                            {% if record.prayer_1 or record.prayer_2 or record.prayer_3 %}
+                                <div class="space-y-3">
+                                    <h4 class="text-[10px] font-display uppercase tracking-widest text-gray-400">Prayers to Heaven</h4>
+                                    <ul class="space-y-2 text-xs font-serif text-gray-600">
+                                        {% if record.prayer_1 %}<li><strong class="font-sans text-[var(--color-gold)] mr-1">I.</strong> {{ record.prayer_1 }}</li>{% endif %}
+                                        {% if record.prayer_2 %}<li><strong class="font-sans text-[var(--color-gold)] mr-1">II.</strong> {{ record.prayer_2 }}</li>{% endif %}
+                                        {% if record.prayer_3 %}<li><strong class="font-sans text-[var(--color-gold)] mr-1">III.</strong> {{ record.prayer_3 }}</li>{% endif %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Right inside detail: 5 Gratitude items -->
+                        <div class="space-y-3">
+                            {% if record.gratitude_1 or record.gratitude_2 or record.gratitude_3 or record.gratitude_4 or record.gratitude_5 %}
+                                <h4 class="text-[10px] font-display uppercase tracking-widest text-[var(--color-oceanic-teal)]">Grateful Ledger</h4>
+                                <div class="bg-gray-50/50 p-4 rounded-xl space-y-2.5 text-xs font-serif text-gray-700 italic border border-gray-100">
+                                    {% if record.gratitude_1 %}<p>1. {{ record.gratitude_1 }}</p>{% endif %}
+                                    {% if record.gratitude_2 %}<p>2. {{ record.gratitude_2 }}</p>{% endif %}
+                                    {% if record.gratitude_3 %}<p>3. {{ record.gratitude_3 }}</p>{% endif %}
+                                    {% if record.gratitude_4 %}<p>4. {{ record.gratitude_4 }}</p>{% endif %}
+                                    {% if record.gratitude_5 %}<p>5. {{ record.gratitude_5 }}</p>{% endif %}
+                                </div>
+                            {% else %}
+                                <p class="text-xs text-gray-400 font-serif italic">No gratitude journal recorded for this date.</p>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

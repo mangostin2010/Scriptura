@@ -1,0 +1,740 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scriptura - Nurturing your faith journey</title>
+    
+    <!-- Google Fonts 로드 (Cinzel, Cormorant Garamond, Plus Jakarta Sans, Great Vibes) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (구조 레이아웃 배치용) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* ------------------------------------------------------------------
+           CSS Variables & Custom Theme Setup
+           ------------------------------------------------------------------ */
+        :root {
+            --color-abyssal: #031424;
+            --color-deep-sea: #082845;
+            --color-oceanic-teal: #0A7E8C;
+            --color-seafoam: #E0F2F1;
+            --color-gold: #D4AF37;
+            --color-gold-glow: rgba(212, 175, 55, 0.2);
+            --color-parchment: #FCFAF5;
+            --color-slate-gray: #4A5568;
+            --font-display: 'Cinzel', serif;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-cursive: 'Great Vibes', cursive;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-parchment);
+            color: var(--color-abyssal);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ------------------------------------------------------------------
+           Typography Adjustments
+           ------------------------------------------------------------------ */
+        .font-display { font-family: var(--font-display); }
+        .font-serif { font-family: var(--font-serif); }
+        .font-cursive { font-family: var(--font-cursive); }
+
+        /* ------------------------------------------------------------------
+           Animations & Delays (Staggered Load)
+           ------------------------------------------------------------------ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+
+        /* ------------------------------------------------------------------
+           Custom Decorative Components
+           ------------------------------------------------------------------ */
+        /* Hero Section Gradient Background mimicking light rays through water */
+        .hero-bg {
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(10, 126, 140, 0.4) 0%, rgba(3, 20, 36, 0.95) 70%),
+                url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1920&q=80') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Golden Thin Border Frame */
+        .sacred-frame {
+            border: 1px solid var(--color-gold);
+            outline: 4px solid rgba(212, 175, 55, 0.1);
+            outline-offset: -8px;
+            transition: all 0.4s ease;
+        }
+        .sacred-frame:hover {
+            outline-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 30px rgba(3, 20, 36, 0.1);
+        }
+
+        /* Glowing Accent Button */
+        .btn-gold {
+            background: linear-gradient(135deg, var(--color-gold) 0%, #B89025 100%);
+            color: #ffffff;
+            font-family: var(--font-display);
+            letter-spacing: 0.1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(135deg, #E5C04A 0%, #CFA52D 100%);
+        }
+
+        /* 30 Day tracker items */
+        .tracker-day {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #E2E8F0;
+        }
+        .tracker-day.completed {
+            background-color: var(--color-oceanic-teal);
+            color: white;
+            border-color: var(--color-oceanic-teal);
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(10, 126, 140, 0.3);
+        }
+
+        /* Paper texture for journaling features */
+        .paper-card {
+            background-color: #ffffff;
+            background-image: radial-gradient(rgba(0,0,0,0.03) 1px, transparent 0);
+            background-size: 24px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Navigation underline effect */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--color-gold);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- ------------------------------------------------------------------
+       Header Section
+       ------------------------------------------------------------------ -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="/" class="flex flex-col">
+                <span class="font-cursive text-4xl text-[var(--color-abyssal)] tracking-wide leading-none">Scriptura</span>
+                <span class="text-[9px] font-display uppercase tracking-[0.25em] text-[var(--color-gold)] mt-1">Sacred Word</span>
+            </a>
+
+            <!-- Search Area (desktop) -->
+            <form method="get" action="/search" class="hidden md:flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 focus-within:ring-2 focus-within:ring-[var(--color-oceanic-teal)] transition-all">
+                <button type="submit" class="flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+                <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search Scripture..." class="bg-transparent border-none text-xs w-full focus:outline-none text-gray-700">
+            </form>
+
+            <!-- Navigation Links (desktop) -->
+            <nav class="hidden md:flex items-center space-x-8 text-xs font-display uppercase tracking-wider text-[var(--color-abyssal)]">
+                <a href="/" class="nav-link text-[var(--color-gold)] font-semibold">Home</a>
+                <a href="/bible" class="nav-link">Bible</a>
+                {% if session.get('user_id') %}
+                    <a href="/mypage" class="nav-link">My Page</a>
+                    <a href="/history" class="nav-link">History</a>
+                    <div class="flex items-center space-x-3 border-l border-gray-200 pl-6">
+                        <span class="text-[10px] text-gray-400">Welcome, <strong class="text-[var(--color-abyssal)] font-semibold">{{ session.get('username') }}</strong></span>
+                        <a href="/logout" class="text-[10px] text-red-500 hover:underline tracking-normal">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="btn-gold px-5 py-2.5 rounded-full text-[10px] shadow-none">Create Account</a>
+                {% endif %}
+            </nav>
+
+            <!-- Hamburger (mobile) -->
+            <button type="button" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false" class="md:hidden flex items-center justify-center p-2 text-[var(--color-abyssal)]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 bg-white px-6 py-5 space-y-5">
+            <form method="get" action="/search" class="flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-[var(--color-oceanic-teal)] transition-all">
+                <button type="submit" class="flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+                <input type="text" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search Scripture..." class="bg-transparent border-none text-sm w-full focus:outline-none text-gray-700">
+            </form>
+            <nav class="flex flex-col space-y-3 text-sm font-display uppercase tracking-wider text-[var(--color-abyssal)]">
+                <a href="/" class="text-[var(--color-gold)] font-semibold">Home</a>
+                <a href="/bible">Bible</a>
+                {% if session.get('user_id') %}
+                    <a href="/mypage">My Page</a>
+                    <a href="/history">History</a>
+                    <div class="flex items-center justify-between border-t border-gray-100 pt-3">
+                        <span class="text-[11px] text-gray-400 normal-case tracking-normal">Welcome, <strong class="text-[var(--color-abyssal)] font-semibold">{{ session.get('username') }}</strong></span>
+                        <a href="/logout" class="text-[11px] text-red-500 hover:underline tracking-normal normal-case">Logout</a>
+                    </div>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register" class="btn-gold px-5 py-2.5 rounded-full text-[11px] text-center shadow-none">Create Account</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('mobileMenuBtn');
+            const menu = document.getElementById('mobileMenu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const isHidden = menu.classList.toggle('hidden');
+                    btn.setAttribute('aria-expanded', String(!isHidden));
+                });
+            }
+        })();
+    </script>
+
+    <!-- ------------------------------------------------------------------
+       Hero Section
+       ------------------------------------------------------------------ -->
+    <section class="hero-bg relative min-h-[85vh] flex items-center justify-center text-center px-6 py-20 text-white overflow-hidden">
+        <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
+        <div class="relative z-10 max-w-4xl mx-auto space-y-8">
+            <div class="animate-fade-in delay-1">
+                <span class="inline-block px-4 py-1 border border-[var(--color-gold)] text-[var(--color-gold)] text-[10px] font-display uppercase tracking-[0.3em] rounded-full mb-6">
+                    Weekly Meditation
+                </span>
+            </div>
+            
+            <h1 class="animate-fade-in delay-2 font-serif text-4xl md:text-6xl italic leading-relaxed md:leading-snug max-w-3xl mx-auto font-light text-[var(--color-seafoam)]">
+                "{{ hero_verse.text }}"
+            </h1>
+            
+            <p class="animate-fade-in delay-3 font-display text-lg tracking-[0.2em] text-[var(--color-gold)]">
+                — {{ hero_verse.reference }} —
+            </p>
+
+            <div class="animate-fade-in delay-4 pt-4">
+                <a href="#mission" class="inline-flex items-center space-x-2 text-xs font-display uppercase tracking-widest text-[var(--color-seafoam)] hover:text-white group">
+                    <span>Discover Our Mission</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------
+       Mission Section
+       ------------------------------------------------------------------ -->
+    <section id="mission" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            
+            <!-- Left: Beautiful Ocean Card with Verse -->
+            <div class="lg:col-span-5 relative">
+                <div class="sacred-frame rounded-2xl overflow-hidden aspect-square bg-[var(--color-abyssal)] relative shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=800&q=80" alt="Preach the gospel" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                    <!-- <img src="https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=800&q=80" alt="Preach the gospel" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"> -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-abyssal)] via-transparent to-transparent"></div>
+                    <div class="absolute inset-0 p-12 flex flex-col justify-end text-white">
+                        <blockquote class="font-serif text-xl md:text-2xl italic leading-relaxed text-[var(--color-seafoam)] mb-6">
+                            "{{ mission_verse.text }}"
+                        </blockquote>
+                        <cite class="font-display text-xs tracking-wider text-[var(--color-gold)] not-italic">— {{ mission_verse.reference }}</cite>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Content and Core Pillars -->
+            <div class="lg:col-span-7 space-y-10">
+                <div class="space-y-4">
+                    <span class="text-xs font-display uppercase tracking-widest text-[var(--color-gold)]">Who We Are</span>
+                    <h2 class="text-4xl md:text-5xl font-display text-[var(--color-abyssal)]">Our Sacred Mission</h2>
+                    <p class="text-gray-600 font-serif text-lg leading-relaxed max-w-xl">
+                        Our mission is to draw Believers closer to God through structured daily Bible reading, deep reflection, prayer, and elegant digital tools designed to encourage genuine faith and daily gratitude.
+                    </p>
+                </div>
+
+                <!-- Icons grid styled like museum exhibits instead of template blocks -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6">
+                    <div class="p-6 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-xl hover:border-[var(--color-gold)] transition-all group text-center">
+                        <div class="h-12 w-12 mx-auto mb-4 flex items-center justify-center text-[var(--color-oceanic-teal)] group-hover:scale-110 transition-transform">
+                            <!-- Book icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-abyssal)]">Word of God</h4>
+                    </div>
+
+                    <div class="p-6 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-xl hover:border-[var(--color-gold)] transition-all group text-center">
+                        <div class="h-12 w-12 mx-auto mb-4 flex items-center justify-center text-[var(--color-oceanic-teal)] group-hover:scale-110 transition-transform">
+                            <!-- Prayer Hands icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-1.413m11.1 4.238l-1.413-1.413m0-7.072l1.413-1.413m-11.1-4.238l-1.41 1.413"></path></svg>
+                        </div>
+                        <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-abyssal)]">Prayer</h4>
+                    </div>
+
+                    <div class="p-6 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-xl hover:border-[var(--color-gold)] transition-all group text-center">
+                        <div class="h-12 w-12 mx-auto mb-4 flex items-center justify-center text-[var(--color-oceanic-teal)] group-hover:scale-110 transition-transform">
+                            <!-- Gratitude Heart icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </div>
+                        <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-abyssal)]">Gratitude</h4>
+                    </div>
+
+                    <div class="p-6 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-xl hover:border-[var(--color-gold)] transition-all group text-center">
+                        <div class="h-12 w-12 mx-auto mb-4 flex items-center justify-center text-[var(--color-oceanic-teal)] group-hover:scale-110 transition-transform">
+                            <!-- Faith Cross icon -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v18M8 8h8"></path></svg>
+                        </div>
+                        <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-abyssal)]">Faith</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------
+       SOAP Bible Study Method Section
+       ------------------------------------------------------------------ -->
+    <section class="py-24 px-6 bg-[var(--color-abyssal)] text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(10,126,140,0.2),transparent_60%)]"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-20">
+                <span class="text-xs font-display uppercase tracking-widest text-[var(--color-gold)]">Bible Study Method</span>
+                <h2 class="text-4xl md:text-5xl font-display">The S.O.A.P Approach</h2>
+                <p class="text-gray-300 font-serif text-lg">A structured framework to deepen your comprehension and application of the living Word.</p>
+            </div>
+
+            <!-- Interleaved Flow Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- S -->
+                <div class="p-8 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm relative group hover:border-[var(--color-gold)]/50 transition-all">
+                    <div class="absolute -top-6 left-8 bg-[var(--color-gold)] text-[var(--color-abyssal)] font-display text-xl w-12 h-12 rounded-full flex items-center justify-center font-bold">S</div>
+                    <h3 class="font-display text-lg uppercase tracking-wide mt-4 mb-3">Scripture</h3>
+                    <p class="text-sm text-gray-400 font-serif leading-relaxed">Read the assigned passage with an open heart. Note down words or verses that resonate with your spirit.</p>
+                </div>
+                <!-- O -->
+                <div class="p-8 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm relative group hover:border-[var(--color-gold)]/50 transition-all">
+                    <div class="absolute -top-6 left-8 bg-[var(--color-oceanic-teal)] text-white font-display text-xl w-12 h-12 rounded-full flex items-center justify-center font-bold">O</div>
+                    <h3 class="font-display text-lg uppercase tracking-wide mt-4 mb-3">Observation</h3>
+                    <p class="text-sm text-gray-400 font-serif leading-relaxed">Understand what it means. What was the context? What is God communicating to the original audience?</p>
+                </div>
+                <!-- A -->
+                <div class="p-8 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm relative group hover:border-[var(--color-gold)]/50 transition-all">
+                    <div class="absolute -top-6 left-8 bg-[var(--color-gold)] text-[var(--color-abyssal)] font-display text-xl w-12 h-12 rounded-full flex items-center justify-center font-bold">A</div>
+                    <h3 class="font-display text-lg uppercase tracking-wide mt-4 mb-3">Application</h3>
+                    <p class="text-sm text-gray-400 font-serif leading-relaxed">Apply it directly to your life. How can you live out these instructions in your modern, everyday routine?</p>
+                </div>
+                <!-- P -->
+                <div class="p-8 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm relative group hover:border-[var(--color-gold)]/50 transition-all">
+                    <div class="absolute -top-6 left-8 bg-[var(--color-oceanic-teal)] text-white font-display text-xl w-12 h-12 rounded-full flex items-center justify-center font-bold">P</div>
+                    <h3 class="font-display text-lg uppercase tracking-wide mt-4 mb-3">Prayer</h3>
+                    <p class="text-sm text-gray-400 font-serif leading-relaxed">Respond to God in deep conversation. Ask for the grace and strength to embody what He has revealed to you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------
+       Interactive Tool: 30-Day Bible Reading Tracker
+       ------------------------------------------------------------------ -->
+    <section class="py-24 px-6 bg-gray-50">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            
+            <!-- Left Panel -->
+            <div class="lg:col-span-5 space-y-6">
+                <span class="text-xs font-display uppercase tracking-widest text-[var(--color-oceanic-teal)]">Spiritual Discipline</span>
+                <h2 class="text-4xl md:text-5xl font-display text-[var(--color-abyssal)] leading-tight">30-Day Proverbs Challenge</h2>
+                <p class="text-gray-600 font-serif text-lg leading-relaxed">
+                    Track your daily Bible readings and monitor your progress. Developing a daily spiritual habit is simplified with our physical and digital structured tracker system.
+                </p>
+                <div class="p-6 border-l-4 border-[var(--color-gold)] bg-white rounded-r-xl shadow-sm">
+                    <p class="text-xs font-display uppercase tracking-wider text-[var(--color-gold)] mb-1">Current Active Book</p>
+                    <p class="font-serif text-lg text-[var(--color-abyssal)] font-semibold">Book of Proverbs</p>
+                </div>
+                <div class="pt-4">
+                    <a href="/read" class="btn-gold px-8 py-3.5 rounded-full text-xs inline-block text-center">Start Challenge Now</a>
+                </div>
+            </div>
+
+            <!-- Right Panel: Interactive Tracker Calendar -->
+            <div class="lg:col-span-7 bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100">
+                <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+                    <div>
+                        <h4 class="font-display text-sm tracking-wider uppercase text-gray-500">Bible Reading Tracker</h4>
+                    </div>
+                    <span class="px-3 py-1 bg-[var(--color-seafoam)] text-[var(--color-oceanic-teal)] text-[10px] font-display uppercase tracking-wider rounded-full">Active Period</span>
+                </div>
+
+                <!-- 30-Day Grid -->
+                <div class="grid grid-cols-5 gap-3 md:gap-4" id="trackerGrid">
+                    <!-- Javascript generates 30 days dynamically so the user can interact. -->
+                </div>
+
+                <!-- Legend / Status -->
+                <div class="mt-8 flex flex-wrap items-center justify-between gap-4 text-xs font-display tracking-wider text-gray-500">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-[var(--color-oceanic-teal)]"></span>
+                        <span>Reading Completed</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3.5 h-3.5 rounded-full border border-gray-200"></span>
+                        <span>Pending</span>
+                    </div>
+                    <div>
+                        Progress: <span id="progressPercent" class="font-bold text-[var(--color-oceanic-teal)]">0%</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------
+       Daily Talk with God & Gratitude Journal
+       ------------------------------------------------------------------ -->
+    <section class="py-24 px-6 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto space-y-24">
+            
+            <!-- Daily Talk with God -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-xs font-display uppercase tracking-widest text-[var(--color-gold)]">Sanctuary of the Mind</span>
+                    <h2 class="text-4xl md:text-5xl font-display text-[var(--color-abyssal)]">Daily Talk with God</h2>
+                    <ul class="space-y-4 font-serif text-lg text-gray-600">
+                        <li class="flex items-start space-x-3">
+                            <span class="text-[var(--color-gold)] mt-1">✦</span>
+                            <span>Pray to God based deeply on inspired Scripture.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <span class="text-[var(--color-gold)] mt-1">✦</span>
+                            <span>Honestly share your thoughts and requests with Him.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <span class="text-[var(--color-gold)] mt-1">✦</span>
+                            <span>Record and look back at answered prayer request archives.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Premium Styled Interactive Prayer Card -->
+                <div class="lg:col-span-6">
+                    <div class="paper-card p-8 md:p-12 sacred-frame relative bg-amber-50/10">
+                        <div class="absolute top-6 right-8 text-xs font-display uppercase tracking-widest text-[var(--color-gold)]">Prayer Card</div>
+                        <h3 class="font-display text-xl uppercase tracking-wider text-[var(--color-abyssal)] mb-8 border-b border-gray-100 pb-2">Talk with God</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2">1. Glorifying through Life</label>
+                                <input type="text" value="Lord, please help me to glorify you through my daily work and studies." class="w-full bg-transparent border-b border-dashed border-gray-300 font-serif italic text-gray-700 py-1 focus:outline-none focus:border-[var(--color-gold)] text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2">2. Intercession for Others</label>
+                                <input type="text" value="Please bless my family and friends, guiding them under Your divine protection." class="w-full bg-transparent border-b border-dashed border-gray-300 font-serif italic text-gray-700 py-1 focus:outline-none focus:border-[var(--color-gold)] text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2">3. Kingdom expansion</label>
+                                <input type="text" value="May the Good News be made manifest to the ends of the earth." class="w-full bg-transparent border-b border-dashed border-gray-300 font-serif italic text-gray-700 py-1 focus:outline-none focus:border-[var(--color-gold)] text-sm">
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end">
+                            <a href="/prayer" class="btn-gold px-6 py-2.5 rounded-full text-[10px] inline-block text-center">Open Prayer Card</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gratitude Journal -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center pt-16 border-t border-gray-100">
+                <!-- Left: Interactive Journal Sheet -->
+                <div class="lg:col-span-6 order-2 lg:order-1">
+                    <div class="paper-card p-8 md:p-12 bg-amber-50/5 border border-dashed border-gray-200">
+                        <div class="flex items-center justify-between mb-8">
+                            <span class="text-xs font-display text-gray-400 tracking-widest">Date: June 12, 2026</span>
+                            <span class="font-cursive text-3xl text-[var(--color-gold)]">Gratitude Journal</span>
+                        </div>
+                        <div class="space-y-4">
+                            <p class="font-serif italic text-sm text-gray-700 border-b border-dashed border-gray-200 pb-2">1. Thank you for giving me wisdom and resilience to overcome difficulties.</p>
+                            <p class="font-serif italic text-sm text-gray-700 border-b border-dashed border-gray-200 pb-2">2. Thank you for providing delicious food and warmth for my home.</p>
+                            <p class="font-serif italic text-sm text-gray-700 border-b border-dashed border-gray-200 pb-2">3. Thank you for the wonderful breeze and pleasant weather today.</p>
+                            <p class="font-serif italic text-sm text-gray-700 border-b border-dashed border-gray-200 pb-2">4. Thank you for giving me trustworthy and loyal friends.</p>
+                            <p class="font-serif italic text-sm text-gray-700 border-b border-dashed border-gray-200 pb-2">5. Thank you for the constant breath of life and Your divine guidance.</p>
+                        </div>
+                        <p class="text-center font-display text-[10px] uppercase tracking-[0.2em] text-[var(--color-gold)] mt-8 italic">"In everything give thanks"</p>
+                    </div>
+                </div>
+
+                <!-- Right: Explanatory Content -->
+                <div class="lg:col-span-6 space-y-6 order-1 lg:order-2">
+                    <span class="text-xs font-display uppercase tracking-widest text-[var(--color-oceanic-teal)]">Attitude of Heart</span>
+                    <h2 class="text-4xl md:text-5xl font-display text-[var(--color-abyssal)]">Daily Reflection</h2>
+                    <p class="text-gray-600 font-serif text-lg leading-relaxed">
+                        Writing five items each day helps you discover God’s footprints in the details. Transition your perspective from complaints to infinite grace.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                        <div class="p-4 border border-gray-100 rounded-lg">
+                            <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-abyssal)] mb-1">Reflect on Goodness</h4>
+                            <p class="text-xs text-gray-500 font-serif">Shift your inner mental focus toward abundance rather than lack.</p>
+                        </div>
+                        <div class="p-4 border border-gray-100 rounded-lg">
+                            <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-abyssal)] mb-1">Look for footprints</h4>
+                            <p class="text-xs text-gray-500 font-serif">Notice the subtle coincidences and daily answers to your quiet prayers.</p>
+                        </div>
+                    </div>
+                    <div class="pt-6">
+                        <a href="/gratitude" class="btn-gold px-8 py-3 rounded-full text-xs inline-block text-center">Open Gratitude Journal</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------
+       Middle Split Banner: Verse of the Day
+       ------------------------------------------------------------------ -->
+    <section class="relative min-h-[40vh] flex items-center bg-[var(--color-abyssal)] text-white overflow-hidden py-16 px-6">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-abyssal)] via-[var(--color-abyssal)]/80 to-transparent z-10"></div>
+        <img src="https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=1500&q=80" alt="Ocean waves" class="absolute inset-y-0 right-0 w-full lg:w-1/2 h-full object-cover">
+        
+        <div class="max-w-7xl mx-auto w-full relative z-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="text-xs font-display uppercase tracking-widest text-[var(--color-gold)]">Verse of the Day</span>
+                <blockquote class="font-serif text-2xl italic leading-relaxed text-[var(--color-seafoam)]">
+                    "{{ verse_of_the_day.text }}"
+                </blockquote>
+                <p class="font-display text-xs tracking-widest text-[var(--color-gold)] uppercase">— {{ verse_of_the_day.reference }}</p>
+                <div class="pt-2">
+                    <a href="/read" class="btn-gold px-8 py-3 rounded-full text-[10px] inline-block text-center">Read More Chapters</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------
+       Footer Section
+       ------------------------------------------------------------------ -->
+    <footer class="bg-[var(--color-abyssal)] text-white/80 py-16 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
+            
+            <div class="md:col-span-4 space-y-4">
+                <span class="font-cursive text-4xl text-white tracking-wide leading-none">Scriptura</span>
+                <p class="text-xs text-gray-400 font-serif leading-relaxed pt-2">
+                    Nurturing a deeper, intentional walk with God through scripture meditation, interactive reading habits tracking, gratitude journaling, and conversational prayer.
+                </p>
+            </div>
+
+            <div class="md:col-span-2 space-y-4">
+                <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-gold)] font-bold">Categories</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><a href="#" class="hover:text-white transition-colors">Verse of the Day</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Character of the Day</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Gratitude Journal</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-2 space-y-4">
+                <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-gold)] font-bold">Company</h4>
+                <ul class="space-y-2 text-xs text-gray-400">
+                    <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Private Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="md:col-span-4 space-y-4">
+                <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-gold)] font-bold">Stay connected</h4>
+                <p class="text-xs text-gray-400 font-serif">Sign up for our beautiful weekly spiritual mailers.</p>
+                <div class="flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1">
+                    <input type="email" placeholder="Enter your email" class="bg-transparent border-none text-xs w-full focus:outline-none text-white py-2">
+                    <button class="text-xs font-display text-[var(--color-gold)] hover:text-white font-bold px-2 uppercase tracking-wider">Join</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="max-w-7xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <p>&copy; 2026 SCRIPTURA. All Rights Reserved.</p>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-white transition-colors">Cookie settings</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ------------------------------------------------------------------
+       Javascript for Interactive 30-Day Tracker
+       ------------------------------------------------------------------ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('trackerGrid');
+            const progressPercent = document.getElementById('progressPercent');
+
+            const completedDates = {{ completed_dates | tojson }};
+            const completedDays = completedDates.map(dateStr => parseInt(dateStr.split('-')[2], 10));
+
+            function updateProgress() {
+                const percent = Math.round((completedDays.length / 30) * 100);
+                if (progressPercent) progressPercent.textContent = `${percent}%`;
+            }
+
+            // Dynamically build 30 days grid
+            for (let i = 1; i <= 30; i++) {
+                const dayEl = document.createElement('div');
+                dayEl.classList.add(
+                    'tracker-day', 
+                    'aspect-square', 
+                    'rounded-lg', 
+                    'flex', 
+                    'flex-col',
+                    'items-center', 
+                    'justify-center', 
+                    'text-center',
+                    'p-2',
+                    'bg-white'
+                );
+                
+                // Add day content
+                dayEl.innerHTML = `
+                    <span class="text-xs font-semibold font-display">${i}</span>
+                    <span class="text-[8px] opacity-60 font-serif mt-0.5">Day</span>
+                `;
+
+                if (completedDays.includes(i)) {
+                    dayEl.classList.add('completed');
+                }
+
+                grid.appendChild(dayEl);
+            }
+
+            updateProgress();
+        });
+    </script>
+
+    <!-- Background Music Player -->
+    <div id="bgmPlayer" class="fixed bottom-5 right-5 z-50 flex items-center gap-3 bg-white/95 backdrop-blur-md border border-gray-200 shadow-lg rounded-full pl-3 pr-5 py-2">
+        <button type="button" id="bgmToggle" aria-label="Play background music" class="flex-shrink-0 h-10 w-10 rounded-full bg-[var(--color-oceanic-teal)] text-white flex items-center justify-center hover:bg-[var(--color-abyssal)] transition-colors">
+            <svg id="bgmIconPlay" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg id="bgmIconPause" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+            </svg>
+        </button>
+        <div class="flex flex-col">
+            <span class="text-[10px] font-display uppercase tracking-wider text-[var(--color-gold)] leading-tight">Prayer Music</span>
+            <input type="range" id="bgmVolume" min="0" max="1" step="0.05" value="0.5" class="w-24 accent-[var(--color-oceanic-teal)] cursor-pointer" aria-label="Volume">
+        </div>
+        <audio id="bgmAudio" loop preload="none" src="{{ url_for('static', filename='bgm.mp3') }}"></audio>
+    </div>
+    <script>
+        (function () {
+            const audio = document.getElementById('bgmAudio');
+            const toggle = document.getElementById('bgmToggle');
+            const iconPlay = document.getElementById('bgmIconPlay');
+            const iconPause = document.getElementById('bgmIconPause');
+            const volume = document.getElementById('bgmVolume');
+            if (!audio || !toggle) return;
+
+            const savedVol = parseFloat(localStorage.getItem('bgmVolume'));
+            audio.volume = isNaN(savedVol) ? 0.5 : savedVol;
+            volume.value = audio.volume;
+
+            function showPlaying(playing) {
+                iconPlay.classList.toggle('hidden', playing);
+                iconPause.classList.toggle('hidden', !playing);
+                toggle.setAttribute('aria-label', playing ? 'Pause background music' : 'Play background music');
+            }
+
+            const savedTime = parseFloat(localStorage.getItem('bgmTime'));
+            if (!isNaN(savedTime)) {
+                audio.addEventListener('loadedmetadata', () => {
+                    if (savedTime < audio.duration) audio.currentTime = savedTime;
+                }, { once: true });
+            }
+
+            if (localStorage.getItem('bgmPlaying') === 'true') {
+                audio.play().then(() => showPlaying(true)).catch(() => showPlaying(false));
+            }
+
+            toggle.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => showPlaying(true)).catch(() => showPlaying(false));
+                } else {
+                    audio.pause();
+                    showPlaying(false);
+                }
+            });
+
+            volume.addEventListener('input', () => {
+                audio.volume = parseFloat(volume.value);
+                localStorage.setItem('bgmVolume', volume.value);
+            });
+
+            audio.addEventListener('play', () => {
+                showPlaying(true);
+                localStorage.setItem('bgmPlaying', 'true');
+            });
+            audio.addEventListener('pause', () => {
+                showPlaying(false);
+                localStorage.setItem('bgmPlaying', 'false');
+            });
+            audio.addEventListener('timeupdate', () => {
+                localStorage.setItem('bgmTime', audio.currentTime);
+            });
+            audio.addEventListener('ended', () => {
+                localStorage.setItem('bgmTime', '0');
+            });
+        })();
+    </script>
+</body>
+</html>

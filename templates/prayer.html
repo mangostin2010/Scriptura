@@ -1,0 +1,68 @@
+<!-- templates/prayer.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+    
+    <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+        <a href="/mypage" class="text-xs font-display uppercase tracking-widest text-gray-400 hover:text-[var(--color-abyssal)] transition-colors">
+            ← Back to Dashboard
+        </a>
+        <h2 class="text-2xl font-display text-[var(--color-abyssal)]">Daily Talk with God</h2>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+        
+        <!-- Left Banner Guide -->
+        <div class="lg:col-span-5 flex flex-col justify-between bg-gradient-to-br from-[var(--color-deep-sea)] to-[var(--color-abyssal)] text-white p-8 rounded-2xl relative overflow-hidden shadow-xl">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(10,126,140,0.3),transparent_60%)]"></div>
+            <div class="relative z-10 space-y-6">
+                <span class="inline-block px-3 py-1 border border-[var(--color-gold)] text-[var(--color-gold)] text-[9px] font-display uppercase tracking-widest rounded-full">
+                    Praying Through Scripture
+                </span>
+                <p class="font-serif italic text-lg leading-relaxed text-[var(--color-seafoam)]">
+                    "Lord, may the day come soon when all the earth knows You and worships You. Use my life for Your glory and for the spread of Your kingdom."
+                </p>
+            </div>
+            
+            <div class="relative z-10 mt-12 pt-6 border-t border-white/10">
+                <h4 class="font-display text-xs text-[var(--color-gold)] uppercase tracking-wider mb-2">Sovereign Communion</h4>
+                <p class="text-xs text-gray-400 font-serif">Pour out your most sincere heart requests. Leave them in His capable hands.</p>
+            </div>
+        </div>
+
+        <!-- Right: Interactive Writing card -->
+        <div class="lg:col-span-7 bg-white p-8 md:p-10 rounded-2xl border border-gray-100 shadow-md">
+            <form method="POST" class="space-y-8">
+                <div class="border-b border-gray-100 pb-4">
+                    <h3 class="font-display text-lg uppercase tracking-wide text-[var(--color-abyssal)]">My Prayer Request Card</h3>
+                    <p class="text-xs text-gray-400 font-serif mt-1">Written prayer has great depth. Document your three primary requests.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400">1. Personal Sanctification</label>
+                        <input type="text" name="prayer_1" value="{{ prayers.p1 }}" placeholder="Type your first prayer request..." class="w-full bg-transparent border-b border-gray-200 focus:border-[var(--color-gold)] py-2 font-serif italic text-gray-700 text-sm focus:outline-none transition-colors">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400">2. Family & Fellowship Intercession</label>
+                        <input type="text" name="prayer_2" value="{{ prayers.p2 }}" placeholder="Type your second prayer request..." class="w-full bg-transparent border-b border-gray-200 focus:border-[var(--color-gold)] py-2 font-serif italic text-gray-700 text-sm focus:outline-none transition-colors">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-display uppercase tracking-widest text-gray-400">3. Kingdom & Outreach Petition</label>
+                        <input type="text" name="prayer_3" value="{{ prayers.p3 }}" placeholder="Type your third prayer request..." class="w-full bg-transparent border-b border-gray-200 focus:border-[var(--color-gold)] py-2 font-serif italic text-gray-700 text-sm focus:outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-end">
+                    <button type="submit" class="btn-gold px-8 py-3 rounded-full text-xs">Commit & Save</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+<!-- templates/verse.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-12 space-y-12">
+    
+    <!-- Header with Back Button -->
+    <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+        <a href="/mypage" class="text-xs font-display uppercase tracking-widest text-gray-400 hover:text-[var(--color-abyssal)] transition-colors flex items-center space-x-2">
+            <span>← Back to Dashboard</span>
+        </a>
+        <h2 class="text-2xl font-display text-[var(--color-abyssal)]">Verse of the Day</h2>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        
+        <!-- Left: Image Cover & Verse Display -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="sacred-frame rounded-2xl overflow-hidden aspect-square bg-[var(--color-abyssal)] relative shadow-xl">
+                <img src="https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-abyssal)] via-transparent to-transparent"></div>
+                <div class="absolute inset-0 p-8 flex flex-col justify-end text-white">
+                    <p class="font-serif text-xl italic leading-relaxed text-[var(--color-seafoam)] mb-4">
+                        "{{ verse_of_the_day.text }}"
+                    </p>
+                    <cite class="font-display text-xs text-[var(--color-gold)] not-italic">— {{ verse_of_the_day.reference }}</cite>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Interactive Typing Practice -->
+        <div class="lg:col-span-7 space-y-8 bg-white p-8 rounded-2xl border border-gray-100 shadow-md">
+            <div class="space-y-2">
+                <h4 class="font-display text-xs uppercase tracking-wider text-[var(--color-gold)]">Interactive Memorization Practice</h4>
+                <p class="text-sm text-gray-500 font-serif">Type the verse in the area below. Matching letters will highlight in sacred gold.</p>
+            </div>
+
+            <!-- Target Text Representation -->
+            <div class="p-6 bg-gray-50 rounded-xl border border-gray-200/50">
+                <p id="targetText" class="font-serif text-lg leading-relaxed text-gray-400 select-none"></p>
+            </div>
+
+            <!-- Typing Input -->
+            <div class="space-y-4">
+                <textarea id="typingInput" rows="3" placeholder="Click here and begin typing the verse..." class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[var(--color-gold)] font-serif text-base text-gray-700 leading-relaxed placeholder-gray-300"></textarea>
+                
+                <div class="flex items-center justify-between text-xs font-display text-gray-400">
+                    <span id="accuracy">Accuracy: 100%</span>
+                    <span id="completion">0 / 0 characters</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom: Biblical Insights & Custom Life Application -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-8 border-t border-gray-200">
+        <div class="lg:col-span-5 space-y-4">
+            <h4 class="font-display text-sm uppercase tracking-wider text-[var(--color-abyssal)]">Biblical Insight</h4>
+            <p class="text-sm text-gray-600 font-serif leading-relaxed">
+                God promises that one day the entire creation will be blanketed in His absolute glory and holiness. Even in challenging times, we can rest safely in the certainty that His grand narrative is being perfectly woven according to His sovereignty.
+            </p>
+        </div>
+
+        <div class="lg:col-span-7">
+            <form method="POST" class="space-y-6">
+                <input type="hidden" name="accuracy" id="accuracyInput" value="0">
+                <div class="space-y-2">
+                    <label class="block font-display text-sm uppercase tracking-wider text-[var(--color-abyssal)]">Personal Application</label>
+                    <p class="text-xs text-gray-400 font-serif">How will you embody and reflect God's sovereign glory through your actions, speech, and habits today?</p>
+                </div>
+                <textarea name="application" rows="3" placeholder="Ex) I will reflect God's glory by speaking words of absolute encouragement and exhibiting patience in my interactions today..." class="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[var(--color-gold)] font-serif italic text-sm text-gray-700 leading-relaxed">{{ record.verse_application or '' }}</textarea>
+                <div class="flex justify-end">
+                    <button type="submit" class="btn-gold px-8 py-3 rounded-full text-xs">Save to Dashboard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const verseText = {{ verse_of_the_day.text | tojson }};
+    const targetTextEl = document.getElementById('targetText');
+    const typingInput = document.getElementById('typingInput');
+    const accuracyEl = document.getElementById('accuracy');
+    const completionEl = document.getElementById('completion');
+
+    // Display target text with span wraps for each character
+    const chars = verseText.split('');
+    targetTextEl.innerHTML = chars.map(char => `<span>${char}</span>`).join('');
+    const targetSpans = targetTextEl.querySelectorAll('span');
+
+    typingInput.addEventListener('input', () => {
+        const inputVal = typingInput.value;
+        let correctCount = 0;
+        let errorCount = 0;
+
+        targetSpans.forEach((span, index) => {
+            const inputChar = inputVal[index];
+            if (inputChar == null) {
+                span.className = ''; // Un-typed
+            } else if (inputChar === span.textContent) {
+                span.className = 'text-[var(--color-gold)] font-semibold'; // Correct
+                correctCount++;
+            } else {
+                span.className = 'text-red-400 border-b border-red-300'; // Mistake
+                errorCount++;
+            }
+        });
+
+        // Statistics
+        const typedLength = inputVal.length;
+        const totalLength = verseText.length;
+        const accuracy = typedLength > 0 ? Math.round((correctCount / typedLength) * 100) : 100;
+        
+        accuracyEl.textContent = `Accuracy: ${accuracy}%`;
+        completionEl.textContent = `${typedLength} / ${totalLength} characters`;
+
+        // Update hidden input for DB submit
+        document.getElementById('accuracyInput').value = accuracy;
+
+        if (typedLength === totalLength && errorCount === 0) {
+            accuracyEl.textContent = "✓ Complete & Verified!";
+            accuracyEl.className = "text-green-600 font-semibold";
+        } else {
+            accuracyEl.className = "text-xs font-display text-gray-400";
+        }
+    });
+</script>
+{% endblock %}
