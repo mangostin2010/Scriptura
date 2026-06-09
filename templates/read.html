@@ -4,10 +4,33 @@
 {% block content %}
 <style>
     .water-bg {
-        background: 
+        background:
             radial-gradient(circle at top left, rgba(10, 126, 140, 0.08) 0%, transparent 60%),
             radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
             var(--color-parchment);
+    }
+
+    @keyframes verseFadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-16px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .verse-line {
+        opacity: 0;
+        animation: verseFadeInDown 0.6s ease-out forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .verse-line {
+            opacity: 1;
+            animation: none;
+        }
     }
 </style>
 
@@ -29,7 +52,7 @@
         <div class="bg-white p-8 md:p-16 rounded-3xl border border-gray-100 shadow-lg space-y-8 relative overflow-hidden">
             <div class="space-y-6 text-gray-700 font-serif text-lg leading-loose text-justify">
                 {% for verse in verses %}
-                <p><strong class="font-display text-xs text-[var(--color-gold)] mr-2">{{ verse.num }}</strong> {{ verse.text }}</p>
+                <p class="verse-line" style="animation-delay: {{ loop.index0 * 0.06 }}s"><strong class="font-display text-xs text-[var(--color-gold)] mr-2">{{ verse.num }}</strong> {{ verse.text }}</p>
                 {% endfor %}
             </div>
 
